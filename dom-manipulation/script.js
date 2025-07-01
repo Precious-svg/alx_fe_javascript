@@ -82,4 +82,59 @@ const quotes = [
     document.getElementById('newQuote').addEventListener('click', showRandomQuote);
     createAddQuoteForm(); 
   });
+
+  function exportQuotesToJson() {
+    const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+  
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'quotes.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  
+  // ====== Import Quotes from JSON File ======
+  function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function (event) {
+      try {
+        const importedQuotes = JSON.parse(event.target.result);
+        if (Array.isArray(importedQuotes)) {
+          quotes.push(...importedQuotes);
+          saveQuotes();
+          alert('Quotes imported successfully!');
+          showRandomQuote();
+        } else {
+          alert('Invalid file format.');
+        }
+      } catch (e) {
+        alert('Error parsing JSON file.');
+      }
+    };
+    fileReader.readAsText(event.target.files[0]);
+  }
+  
+  // ====== Load Last Viewed Quote from Session ======
+  function loadLastViewedQuote() {
+    const lastQuote = sessionStorage.getItem('lastViewedQuote');
+    if (lastQuote) {
+      const quote = JSON.parse(lastQuote);
+      document.getElementById('quoteDisplay').innerHTML = `
+        <blockquote>"${quote.text}"</blockquote>
+        <p><em>Category: ${quote.category}</em></p>
+      `;
+    }
+  }
+  
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+    document.getElementById('exportBtn').addEventListener('click', exportQuotesToJson);
+    document.getElementById('importFile').addEventListener('change', importFromJsonFile);
+    createAddQuoteForm();
+    loadLastViewedQuote();
+  });
+  
   
