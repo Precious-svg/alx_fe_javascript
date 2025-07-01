@@ -15,17 +15,50 @@ const quotes = [
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const quote = quotes[randomIndex];
   
-    // Update DOM with new quote
     quoteDisplay.innerHTML = `
       <blockquote>"${quote.text}"</blockquote>
       <p><em>Category: ${quote.category}</em></p>
     `;
   }
   
-  // ===== Add New Quote =====
+  
+  function createAddQuoteForm() {
+    
+    if (document.getElementById('quoteForm')) return;
+  
+    const formContainer = document.createElement('div');
+    formContainer.id = 'formContainer';
+  
+    const quoteInput = document.createElement('input');
+    quoteInput.type = 'text';
+    quoteInput.id = 'newQuoteText';
+    quoteInput.placeholder = 'Enter a new quote';
+  
+    const categoryInput = document.createElement('input');
+    categoryInput.type = 'text';
+    categoryInput.id = 'newQuoteCategory';
+    categoryInput.placeholder = 'Enter quote category';
+  
+    const addButton = document.createElement('button');
+    addButton.textContent = 'Add Quote';
+    addButton.addEventListener('click', addQuote);
+  
+    formContainer.appendChild(quoteInput);
+    formContainer.appendChild(categoryInput);
+    formContainer.appendChild(addButton);
+  
+    document.body.appendChild(formContainer);
+  }
+  
+
   function addQuote() {
     const textInput = document.getElementById('newQuoteText');
     const categoryInput = document.getElementById('newQuoteCategory');
+  
+    if (!textInput || !categoryInput) {
+      alert("Form inputs not found.");
+      return;
+    }
   
     const newText = textInput.value.trim();
     const newCategory = categoryInput.value.trim();
@@ -35,20 +68,18 @@ const quotes = [
       return;
     }
   
-    // Add new quote to array
     quotes.push({ text: newText, category: newCategory });
   
-    // Clear inputs
     textInput.value = '';
     categoryInput.value = '';
   
     alert("Quote added successfully!");
-  
-    // Optionally display the new quote
     showRandomQuote();
   }
   
-  // ===== Set Up Event Listener =====
+  // ===== Initialize on DOMContentLoaded =====
   document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+    createAddQuoteForm(); 
   });
+  
